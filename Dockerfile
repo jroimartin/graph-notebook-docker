@@ -9,18 +9,20 @@ RUN pip install gremlinpython requests backoff
 
 # Pin specific versions of Jupyter and Tornado dependency.
 RUN pip install 'notebook==5.7.10' && \
-    pip install 'tornado==4.5.3'
+    pip install 'tornado==4.5.3' && \
+    pip install 'rdflib==5.0.0'
 
 # Install the graph-notebook package.
 RUN pip install 'graph-notebook==2.1.2'
 
 # Install and enable the visualization widget.
-RUN jupyter nbextension install --py --sys-prefix graph_notebook.widgets && \
-    jupyter nbextension enable  --py --sys-prefix graph_notebook.widgets
+RUN jupyter nbextension install --py --sys-prefix graph_notebook.widgets
+RUN jupyter nbextension enable  --py --sys-prefix graph_notebook.widgets
 
 # Copy static html resources.
-RUN python -m graph_notebook.static_resources.install && \
-    python -m graph_notebook.nbextensions.install
+RUN python -m graph_notebook.static_resources.install
+
+RUN python -m graph_notebook.nbextensions.install
 
 # Create default notebooks location and copy premade starter notebooks.
 RUN mkdir /notebooks
