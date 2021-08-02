@@ -1,13 +1,22 @@
 dist: bionic
 env:
   global:
-    - DEV_IMAGE_REPOSITORY="graph-notebook-dev-ephemeral/$TRAVIS_COMMIT"
+    - DEV_IMAGE="purpleteam/graph-notebook-dev-ephemeral:$TRAVIS_COMMIT"
 services:
   - docker
 script:
-  - docker build -t $DEV_IMAGE_REPOSITORY .
+  - docker build -t $DEV_IMAGE .
 deploy:
-  provider: script
-  script: script/push_docker.sh
-  on:
-    tags: true
+  - provider: script
+    skip_cleanup: true
+    script: >
+        DOCKER_IMAGE_RELEASE=purpleteam/graph-notebook:$TRAVIS_TAG
+        docker image tag $DEV_IMAGE $DOCKER_IMAGE_RELEASE
+        sh ./script/push_docker.sh $DOCKER_IMAGE_RELEASE
+    on:
+      tags: true
+  - provider: script
+    skip_cleanup: true
+    script: sh ./script/push_docker.sh $DEV_IMAGE
+    on:
+      all_branches: true
