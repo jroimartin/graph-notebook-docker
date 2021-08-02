@@ -2,6 +2,12 @@
 
 # Copyright 2021 Adevinta
 set -ev
-DOCKER_IMAGE_RELEASE=adevinta/graph-notebook:$TRAVIS_TAG
-docker image tag $DEV_IMAGE_REPOSITORY $DOCKER_IMAGE_RELEASE
-echo ${DOCKER_PASSWORD} | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_IMAGE_RELEASE
+if [ -z "$1" ]
+  then
+    echo "no docker image repository specified"
+fi
+IMAGE_REPOSITORY=$1
+echo "pushing image to repository ${IMAGE_REPOSITORY}"
+echo ${DOCKER_PASSWORD} | docker login -u $DOCKER_USERNAME --password-stdin
+docker push $IMAGE_REPOSITORY
+docker logout
