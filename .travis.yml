@@ -11,7 +11,7 @@ deploy:
     skip_cleanup: true
     script: >
         DOCKER_IMAGE_RELEASE=purpleteam/graph-notebook:$TRAVIS_TAG &&
-        echo "tagging release image: ${DOCKER_IMAGE_RELEASE}"
+        echo "tagging release image: ${DOCKER_IMAGE_RELEASE}" &&
         docker tag $DEV_IMAGE $DOCKER_IMAGE_RELEASE &&
         sh ./script/push_docker.sh $DOCKER_IMAGE_RELEASE
     on:
