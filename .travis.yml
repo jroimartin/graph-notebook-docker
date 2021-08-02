@@ -1,23 +1,21 @@
 dist: bionic
 env:
   global:
+    - LOCAL_IMAGE="graph-notebook"
     - DEV_IMAGE="purpleteam/graph-notebook-dev-ephemeral:$TRAVIS_COMMIT"
+    - RELEASE_IMAGE="purpleteam/graph-notebook:${TRAVIS_TAG}"
 services:
   - docker
 script:
-  - docker build -t $DEV_IMAGE .
+  - docker build -t "graph-notebook:local" .
 deploy:
   - provider: script
     skip_cleanup: true
-    script: >
-        DOCKER_IMAGE_RELEASE=purpleteam/graph-notebook:$TRAVIS_TAG &&
-        echo "tagging release image: ${DOCKER_IMAGE_RELEASE}" &&
-        docker tag $DEV_IMAGE $DOCKER_IMAGE_RELEASE &&
-        sh ./script/push_docker.sh $DOCKER_IMAGE_RELEASE
+    script: ./script/push_docker.sh "graph-notebook:local" $RELEASE_IMAGE
     on:
       tags: true
   - provider: script
     skip_cleanup: true
-    script: sh ./script/push_docker.sh $DEV_IMAGE
+    script: ./script/push_docker.sh "graph-notebook:local" $DEV_IMAGE
     on:
       all_branches: true
